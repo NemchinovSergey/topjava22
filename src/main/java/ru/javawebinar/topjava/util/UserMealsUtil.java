@@ -49,7 +49,7 @@ public class UserMealsUtil {
             if (TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
                 int sum = daysCalories.getOrDefault(meal.getDate(), 0);
                 boolean excess = sum > caloriesPerDay;
-                mealWithExcesses.add(new MealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess));
+                mealWithExcesses.add(createMealWithExcess(meal, excess));
             }
         }
         return mealWithExcesses;
@@ -65,8 +65,13 @@ public class UserMealsUtil {
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> {
                     boolean excess = daysCalories.getOrDefault(meal.getDate(), 0) > caloriesPerDay;
-                    return new MealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+                    return createMealWithExcess(meal, excess);
                 })
                 .collect(Collectors.toList());
     }
+
+    private static MealWithExcess createMealWithExcess(Meal meal, boolean excess) {
+        return new MealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+    }
+
 }
