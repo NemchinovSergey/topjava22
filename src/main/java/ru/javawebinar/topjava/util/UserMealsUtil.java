@@ -10,6 +10,8 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toMap;
 
 public class UserMealsUtil {
@@ -56,7 +58,11 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> daysCalories = meals.stream().collect(toMap(meal -> meal.getDateTime().toLocalDate(), UserMeal::getCalories, Integer::sum));
+        Map<LocalDate, Integer> daysCalories = meals.stream().collect(
+                // there are two ways to group list items
+                //toMap(meal -> meal.getDateTime().toLocalDate(), UserMeal::getCalories, Integer::sum)
+                groupingBy(meal -> meal.getDateTime().toLocalDate(), summingInt(UserMeal::getCalories))
+        );
         return meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
                 .map(meal -> {
