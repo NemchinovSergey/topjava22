@@ -6,7 +6,7 @@
 <%--<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>--%>
 <html>
 <head>
-    <title>Meals</title>
+    <title>Meal list</title>
     <style>
         .normal {
             color: green;
@@ -18,18 +18,23 @@
     </style>
 </head>
 <body>
-<h3><a href="index.html">Home</a></h3>
-<h3><a href="${pageContext.request.contextPath}/users">Users</a></h3>
-<hr>
-<h2>Meals</h2>
-    <table border="1" cellpadding="8" cellspacing="0" >
+<section>
+    <h3><a href="index.html">Home</a></h3>
+    <hr/>
+    <h2>Meals</h2>
+    <a href="meals?action=create">Add Meal</a>
+    <br><br>
+    <table border="1" cellpadding="8" cellspacing="0">
         <thead>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Calories</th>
-            </tr>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Calories</th>
+            <th></th>
+            <th></th>
+        </tr>
         </thead>
+        <jsp:useBean id="meals" type="java.util.List" scope="request"/>
         <c:forEach items="${meals}" var="meal">
             <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
@@ -41,8 +46,11 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
+                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
+                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </table>
+</section>
 </body>
 </html>
