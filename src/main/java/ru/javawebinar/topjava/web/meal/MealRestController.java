@@ -46,10 +46,9 @@ public class MealRestController {
         mealService.delete(SecurityUtil.authUserId(), mealId);
     }
 
-    public MealTo get(int mealId) {
+    public Meal get(int mealId) {
         log.info("Get the meal with userId: {} and mealId: {}", SecurityUtil.authUserId(), mealId);
-        Meal meal = mealService.get(SecurityUtil.authUserId(), mealId);
-        return MealsUtil.createTo(meal, false);
+        return mealService.get(SecurityUtil.authUserId(), mealId);
     }
 
     public List<MealTo> getAll() {
