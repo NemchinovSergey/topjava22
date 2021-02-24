@@ -2,11 +2,10 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -23,11 +22,9 @@ public class MealRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MealService mealService;
-    private final UserService userService;
 
-    public MealRestController(MealService mealService, UserService userService) {
+    public MealRestController(MealService mealService) {
         this.mealService = mealService;
-        this.userService = userService;
     }
 
     public MealTo create(Meal meal) {
@@ -58,15 +55,21 @@ public class MealRestController {
     public List<MealTo> getAll() {
         log.info("Get all meals with userId: {}", SecurityUtil.authUserId());
         List<Meal> meals = mealService.getAll(SecurityUtil.authUserId());
-        User user = userService.get(SecurityUtil.authUserId());
-        return MealsUtil.getTos(meals, user.getCaloriesPerDay());
+        return MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAllFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        log.info("Get all meals with userId: {}", SecurityUtil.authUserId());
-        User user = userService.get(SecurityUtil.authUserId());
-        List<Meal> meals = mealService.getAll(SecurityUtil.authUserId());
-        return MealsUtil.getFilteredTos(meals, user.getCaloriesPerDay(), startTime, endTime);
-    }
+    /**
+     * <ol>Filter separately
+     * <li>by date</li>
+     * <li>by time for every date</li>
+     * </ol>
+     */
+    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
+                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+        int userId = SecurityUtil.authUserId();
+        log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
 
+        List<Meal> mealsDateFiltered = mealService.getBetweenInclusive(startDate, endDate, userId);
+        return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
+    }
 }
