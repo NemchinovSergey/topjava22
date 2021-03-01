@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -19,6 +20,7 @@ import java.util.List;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
+@ActiveProfiles("jdbc")
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
         "classpath:spring/spring-db.xml"
