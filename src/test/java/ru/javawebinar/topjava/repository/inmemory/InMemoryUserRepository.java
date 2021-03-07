@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 import static ru.javawebinar.topjava.UserTestData.admin;
 import static ru.javawebinar.topjava.UserTestData.user;
 
-@Profile("inmemory")
+//@Profile("inmemory")
 @Repository
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
 

@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -15,16 +15,13 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class InMemoryAdminRestControllerTest {
     private static final Logger log = LoggerFactory.getLogger(InMemoryAdminRestControllerTest.class);
 
-    private static GenericXmlApplicationContext appCtx;
+    private static ClassPathXmlApplicationContext appCtx;
     private static AdminRestController controller;
     private static InMemoryUserRepository repository;
 
     @BeforeClass
     public static void beforeClass() {
-        appCtx = new GenericXmlApplicationContext();
-        appCtx.getEnvironment().setActiveProfiles("inmemory");
-        appCtx.load("spring/spring-app.xml");
-        appCtx.refresh();
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/inmemory.xml");
         log.info("\n{}\n", Arrays.toString(appCtx.getBeanDefinitionNames()));
         controller = appCtx.getBean(AdminRestController.class);
         repository = appCtx.getBean(InMemoryUserRepository.class);
