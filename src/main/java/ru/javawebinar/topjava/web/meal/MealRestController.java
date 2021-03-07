@@ -27,16 +27,16 @@ public class MealRestController {
         this.service = service;
     }
 
-    public Meal get(int id) {
+    public Meal get(int mealId) {
         int userId = SecurityUtil.authUserId();
-        log.info("get meal {} for user {}", id, userId);
-        return service.get(id, userId);
+        log.info("get meal {} for user {}", mealId, userId);
+        return service.get(mealId, userId);
     }
 
-    public void delete(int id) {
+    public void delete(int mealId) {
         int userId = SecurityUtil.authUserId();
-        log.info("delete meal {} for user {}", id, userId);
-        service.delete(id, userId);
+        log.info("delete meal {} for user {}", mealId, userId);
+        service.delete(mealId, userId);
     }
 
     public List<MealTo> getAll() {
@@ -52,9 +52,9 @@ public class MealRestController {
         return service.create(meal, userId);
     }
 
-    public void update(Meal meal, int id) {
+    public void update(Meal meal, int mealId) {
         int userId = SecurityUtil.authUserId();
-        assureIdConsistent(meal, id);
+        assureIdConsistent(meal, mealId);
         log.info("update {} for user {}", meal, userId);
         service.update(meal, userId);
     }
