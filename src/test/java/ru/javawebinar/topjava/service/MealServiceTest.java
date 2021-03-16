@@ -1,7 +1,11 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,6 +18,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -29,8 +36,76 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Map<String, Long> durationTime = new HashMap<>();
+
+    @Rule
+    public final TestRule testWatcher = new TestWatcher() {
+
+        private Date startTime;
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            System.out.println(description.getDisplayName() + " " + "apply!\n");
+            return super.apply(base, description);
+        }
+
+        @Override
+        protected void succeeded(Description description) {
+            System.out.println(description.getDisplayName() + " " + "succeeded!\n");
+        }
+
+        @Override
+        protected void failed(Throwable e, Description description) {
+            System.out.println(description.getDisplayName() + " " + e.getClass().getSimpleName() + "failed\n");
+        }
+
+        @Override
+        protected void skipped(AssumptionViolatedException e, Description description) {
+            System.out.println(description.getDisplayName() + " " + e.getClass().getSimpleName() + "skipped\n");
+        }
+
+        @Override
+        protected void starting(Description description) {
+            super.starting(description);
+            startTime = new Date();
+            System.out.println(description.getDisplayName() + " starting\n");
+        }
+
+        @Override
+        protected void finished(Description description) {
+            super.finished(description);
+            System.out.println(description.getDisplayName() + " finished\n");
+            long duration = new Date().getTime() - startTime.getTime();
+            System.out.println("Test " + description.getMethodName() + " lasted " + duration + "ms");
+            durationTime.put(description.getMethodName(), duration);
+        }
+    };
+
     @Autowired
     private MealService service;
+
+    @BeforeClass
+    public static void beforeClass() {
+        System.out.println("beforeClass");
+    }
+
+    @Before
+    public void before() {
+        System.out.println("before");
+    }
+
+    @After
+    public void after() {
+        System.out.println("after");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        System.out.println("afterClass");
+        for (Map.Entry<String, Long> entry : durationTime.entrySet()) {
+            System.out.println("Test " + entry.getKey() + "(): " + entry.getValue() + " ms");
+        }
+    }
 
     @Test
     public void delete() {
